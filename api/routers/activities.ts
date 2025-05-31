@@ -67,6 +67,33 @@ activitiesRouter.get('/:id', async (req, res) => {
     }
 });
 
+activitiesRouter.get('/my/created', auth, async (req, res) => {
+    try {
+        const user = (req as RequestWithUser).user;
+        const activities = await Activity.find({ author: user._id })
+            .populate('author', 'displayName')
+            .sort({createdAt: -1});
+        res.send(activities);
+    } catch (e) {
+        res.status(500).send({error: 'Internal Server Error'});
+    }
+});
+
+activitiesRouter.get('/my/participating', auth, async (req, res) => {
+    try {
+        const user = (req as RequestWithUser).user;
+        const activities = await Activity.find({
+            participants: user._id,
+            isApproved: true
+        })
+            .populate('author', 'displayName')
+            .sort({createdAt: -1});
+        res.send(activities);
+    } catch (e) {
+        res.status(500).send({error: 'Internal Server Error'});
+    }
+});
+
 activitiesRouter.post('/:id/participate', auth, async (req, res, next) => {
     try {
         const user = (req as RequestWithUser).user;
@@ -130,6 +157,35 @@ activitiesRouter.delete('/:id', auth, async (req, res, next) => {
 
         await activity.deleteOne();
         res.send({message: 'Activity deleted'});
+    } catch (e) {
+        next(e);
+    }
+});
+
+activitiesRouter.delete('/:id/participants/:userId', auth, async (req, res, next) => {
+    try {
+        const user = (req as RequestWithUser).user;
+        const activity = await Activity.findById(req.params.id);
+
+        if (!activity) {
+            res.status(404).send({error: 'Activity not found'});
+            return;
+        }
+
+        if (activity.author.toString() !== user._id.toString()) {
+            res.status(403).send({error: 'Only author can remove participants'});
+            return;
+        }
+
+        await Activity.findByIdAndUpdate(req.params.id, {
+            $pull: { participants: req.params.userId }
+        });
+
+        await User.findByIdAndUpdate(req.params.userId, {
+            $pull: { joinedActivities: req.params.id }
+        });
+
+        res.send({message: 'Participant removed'});
     } catch (e) {
         next(e);
     }

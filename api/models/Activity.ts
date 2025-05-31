@@ -2,13 +2,16 @@ import mongoose, {HydratedDocument,Types} from 'mongoose';
 import {UserFields} from "../types";
 import User from "./User";
 
-export interface ActivityFields {
+export interface ActivityBaseFields {
     title: string;
     description: string;
     image: string;
+    isApproved: boolean;
+}
+
+export interface ActivityFields extends ActivityBaseFields {
     author: Types.ObjectId | HydratedDocument<UserFields>;
     participants: Types.ObjectId[];
-    isApproved: boolean;
 }
 
 const ActivitySchema = new mongoose.Schema<ActivityFields>({
