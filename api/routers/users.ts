@@ -49,10 +49,14 @@ usersRouter.post('/google', async (req,res, next) => {
                 displayName: displayName || email.split('@')[0],
                 googleID,
             });
-        }
 
-        user.generateToken();
-        await user.save();
+            await user.save();
+            user.generateToken();
+            await user.save();
+        } else {
+            user.generateToken();
+            await user.save();
+        }
 
         console.log(payload);
         res.send('Login with Google successfully.');

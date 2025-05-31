@@ -38,6 +38,7 @@ const UserSchema = new mongoose.Schema<
         type: String,
         required: true,
         unique: true,
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
         validate: {
             validator: async function(value: string): Promise<boolean> {
                 if (!this.isModified('email')) return true;
@@ -67,6 +68,11 @@ const UserSchema = new mongoose.Schema<
         required: true,
     },
     googleID: String,
+
+    joinedActivities: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Activity',
+    }],
 
 }, {
     virtuals: {
