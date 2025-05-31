@@ -12,6 +12,7 @@ export interface User {
     role: string;
     displayName: string;
     googleID?: string;
+    joinedActivities?: string[];
 }
 
 export interface ValidationError {

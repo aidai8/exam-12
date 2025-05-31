@@ -53,7 +53,7 @@ const UserMenu: React.FC<Props> = ({user}) => {
                 </MenuItem>
                 <MenuItem>
                     <Button component={Link} to="..." onClick={handleClose}>
-                        My Training Groups
+                        Joined activities
                     </Button>
                 </MenuItem>
                 <MenuItem>

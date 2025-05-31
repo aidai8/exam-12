@@ -23,16 +23,18 @@ const App = () => {
           <main>
               <Container maxWidth="xl" sx={{py: 3}}>
                   <Routes>
-                      {/*<Route path="/" element={<Groups/>}/>*/}
-                      {/*<Route path="/groups" element={<Groups/>}/>*/}
+                      {/*<Route path="/" element={<ActivitiesPage/>}/>*/}
+                      {/*<Route path="/groups" element={<ActivitiesPage/>}/>*/}
                       <Route path="/login" element={<Login/>} />
                       <Route path="/register" element={<Register/>} />
+                      {/*<Route path="/activities/:id" element={<ActivityDetails />} />*/}
+                      {/*<Route path="/activities/author/:id" element={<AuthorActivitiesPage />} />*/}
 
                       {/*<Route*/}
-                      {/*    path="/groups/new"*/}
+                      {/*    path="/new-activity"*/}
                       {/*    element={*/}
                       {/*        <ProtectedRoute isAllowed={!!user}>*/}
-                      {/*            <NewGroups />*/}
+                      {/*            <NewActivity />*/}
                       {/*        </ProtectedRoute>*/}
                       {/*    }*/}
                       {/*/>*/}
