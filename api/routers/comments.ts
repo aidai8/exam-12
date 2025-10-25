@@ -7,6 +7,25 @@ import {RequestWithUser} from "../types";
 
 const commentsRouter = express.Router();
 
+commentsRouter.get("/recipe/:recipeId", async (req, res, next) => {
+    try {
+        const { recipeId } = req.params;
+
+        if (!mongoose.isValidObjectId(recipeId)) {
+            res.status(400).send({ error: "Invalid recipe id" });
+            return;
+        }
+
+        const comments = await Comment.find({ recipe: recipeId })
+            .populate("author", "displayName")
+            .sort({ _id: -1 });
+
+        res.send(comments);
+    } catch (error) {
+        next(error);
+    }
+});
+
 commentsRouter.post("/:recipeId", auth, async (req, res, next) => {
     try {
         const userReq = req as RequestWithUser;
