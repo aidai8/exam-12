@@ -47,7 +47,7 @@ const Register = () => {
                 <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-                Sign up
+                Создать аккаунт
             </Typography>
             <Box component="form" noValidate onSubmit={submitFormHandler} sx={{ my: 3, maxWidth: '400px', width: '100%' }}>
                 <Stack spacing={2}>
@@ -83,12 +83,12 @@ const Register = () => {
                         helperText={getFieldError('password')}
                     />
                     <Button type="submit" fullWidth variant="contained" sx={{ mb: 2, bgcolor: 'secondary.main' }} loading={loading}>
-                        Sign Up
+                        Зарегистрироваться
                     </Button>
                 </Stack>
             </Box>
             <Link component={RouterLink} to="/login">
-                Already have an account? Sign in
+                У вас уже есть аккаунт? Войти
             </Link>
         </Box>
     );

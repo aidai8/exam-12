@@ -9,6 +9,8 @@ import {selectUser} from "./features/users/usersSlice.ts";
 import ProtectedRoute from "./components/UI/ProtectedRoute/ProtectedRoute.tsx";
 import Recipes from "./features/recipes/Recipes.tsx";
 import NewRecipe from "./features/recipes/NewRecipe.tsx";
+import FullRecipe from "./features/recipes/FullRecipe.tsx";
+import UserRecipes from "./features/recipes/UserRecipes.tsx";
 
 const App = () => {
     const user = useAppSelector(selectUser);
@@ -26,9 +28,19 @@ const App = () => {
                       <Route path="/" element={<Recipes />}/>
                       <Route path="/login" element={<Login/>} />
                       <Route path="/register" element={<Register/>} />
+                      <Route path="/recipes/:id" element={<FullRecipe/>}/>
+                      <Route path="/users/:userId/recipes" element={<UserRecipes />} />
 
+                      {/*<Route*/}
+                      {/*    path="/recipes/my-recipes"*/}
+                      {/*    element={*/}
+                      {/*        <ProtectedRoute isAllowed={Boolean(user)}>*/}
+                      {/*            <UserRecipes isOwnProfile={true} />*/}
+                      {/*        </ProtectedRoute>*/}
+                      {/*    }*/}
+                      {/*/>*/}
                       <Route
-                          path="/products/new"
+                          path="/recipes/new"
                           element={
                               <ProtectedRoute isAllowed={Boolean(user)}>
                                   <NewRecipe />

@@ -59,10 +59,11 @@ recipesRouter.get("/by-author/:authorId", async (req, res, next) => {
     }
 });
 
-recipesRouter.post("/", auth, imagesUpload.single("image"), async (req: RequestWithUser, res, next) => {
+recipesRouter.post("/", auth, imagesUpload.single("image"), async (req, res, next) => {
     try {
-        const { title, description } = req.body;
-        const image = req.file ? req.file.path : null;
+        const userReq = req as RequestWithUser;
+        const { title, description } = userReq.body;
+        const image = userReq.file ? userReq.file.path : null;
 
         if (!title || !description || !image) {
             res.status(400).send({ error: "All fields are required" });
@@ -73,24 +74,22 @@ recipesRouter.post("/", auth, imagesUpload.single("image"), async (req: RequestW
             title,
             description,
             image,
-            author: req.user._id,
+            author: userReq.user._id,
         });
 
         await recipe.save();
+        await recipe.populate("author", "displayName");
         res.send(recipe);
     } catch (error) {
         next(error);
     }
 });
 
-recipesRouter.delete("/:id", auth, async (req: RequestWithUser, res, next) => {
-    try {
-        if (!req.user) {
-            res.status(401).send({ error: "Unauthorized" });
-            return;
-        }
 
-        const { id } = req.params;
+recipesRouter.delete("/:id", auth, async (req, res, next) => {
+    try {
+        const request = req as RequestWithUser;
+        const { id } = request.params;
 
         if (!mongoose.isValidObjectId(id)) {
             res.status(400).send({ error: "Invalid recipe id" });
@@ -104,7 +103,7 @@ recipesRouter.delete("/:id", auth, async (req: RequestWithUser, res, next) => {
             return;
         }
 
-        if (!recipe.author.equals(req.user._id)) {
+        if (!recipe.author.equals(request.user._id)) {
             res.status(403).send({ error: "You can delete only your own recipes" });
             return;
         }

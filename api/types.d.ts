@@ -1,5 +1,5 @@
 import {Request} from "express";
-import {HydratedDocument} from "mongoose";
+import {Document, HydratedDocument, Types} from "mongoose";
 
 export interface UserFields {
     email: string;
@@ -11,6 +11,12 @@ export interface UserFields {
 
 export interface RequestWithUser extends Request {
     user: HydratedDocument<UserFields>
+}
+
+export interface UserDocument extends UserFields, Document {
+    _id: string;
+    checkPassword(password: string): Promise<boolean>;
+    generateToken(): void;
 }
 
 export interface RecipeFields {

@@ -32,3 +32,24 @@ export interface LoginMutation {
     email: string;
     password: string;
 }
+
+export interface Recipe{
+    _id: string;
+    title: string;
+    description: string;
+    image: string;
+    author: {
+        _id: string;
+        displayName: string;
+    };
+}
+
+export interface Comment {
+    _id: string;
+    text: string;
+    author: {
+        _id: string;
+        displayName: string;
+    };
+    recipe: string;
+}

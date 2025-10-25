@@ -7,15 +7,11 @@ import {RequestWithUser} from "../types";
 
 const commentsRouter = express.Router();
 
-commentsRouter.post("/:recipeId", auth, async (req: RequestWithUser, res, next) => {
+commentsRouter.post("/:recipeId", auth, async (req, res, next) => {
     try {
-        if (!req.user) {
-            res.status(401).send({ error: "Unauthorized" });
-            return;
-        }
-
-        const { recipeId } = req.params;
-        const { text } = req.body;
+        const userReq = req as RequestWithUser;
+        const { recipeId } = userReq.params;
+        const { text } = userReq.body;
 
         if (!mongoose.isValidObjectId(recipeId)) {
             res.status(400).send({ error: "Invalid recipe id" });
@@ -37,24 +33,21 @@ commentsRouter.post("/:recipeId", auth, async (req: RequestWithUser, res, next) 
         const comment = new Comment({
             text,
             recipe: recipeId,
-            author: req.user._id,
+            author: userReq.user._id,
         });
 
         await comment.save();
+        await comment.populate("author", "displayName");
         res.send(comment);
     } catch (error) {
         next(error);
     }
 });
 
-commentsRouter.delete("/:id", auth, async (req: RequestWithUser, res, next) => {
+commentsRouter.delete("/:id", auth, async (req, res, next) => {
     try {
-        if (!req.user) {
-            res.status(401).send({ error: "Unauthorized" });
-            return;
-        }
-
-        const { id } = req.params;
+        const userReq = req as RequestWithUser;
+        const { id } = userReq.params;
 
         if (!mongoose.isValidObjectId(id)) {
             res.status(400).send({ error: "Invalid comment id" });
@@ -75,8 +68,8 @@ commentsRouter.delete("/:id", auth, async (req: RequestWithUser, res, next) => {
             return;
         }
 
-        const isAuthor = comment.author.equals(req.user._id);
-        const isRecipeOwner = recipe.author.equals(req.user._id);
+        const isAuthor = comment.author.equals(userReq.user._id);
+        const isRecipeOwner = recipe.author.equals(userReq.user._id);
 
         if (!isAuthor && !isRecipeOwner) {
             res.status(403).send({ error: "You don't have permission to delete this comment" });

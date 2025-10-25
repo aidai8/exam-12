@@ -51,7 +51,7 @@ const Login = () => {
                 <LockOpenIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-                Sign in
+                Войти
             </Typography>
             {error && (
                 <Alert severity={'error'} sx={{ mt: 3 }}>
@@ -86,12 +86,12 @@ const Login = () => {
                         autoComplete="current-password"
                     />
                     <Button type="submit" fullWidth variant="contained" sx={{ mb: 2, bgcolor: 'secondary.main' }} loading={loading}>
-                        Sign In
+                        Войти
                     </Button>
                 </Stack>
             </Box>
             <Link component={RouterLink} to="/register">
-                Dont have an account yet? Register
+                У вас ещё нет аккаунта? Зарегистрироваться
             </Link>
         </Box>
     );

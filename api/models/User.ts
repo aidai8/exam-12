@@ -1,21 +1,30 @@
-import mongoose, {Model} from "mongoose";
-import bcrypt from "bcrypt";
-import {UserFields} from "../types";
-import {randomUUID} from "node:crypto";
+import mongoose, {HydratedDocument} from "mongoose";
+import {UserDocument, UserFields} from "../types";
+import argon2 from "argon2";
+import jwt from 'jsonwebtoken';
 
 interface UserMethods {
     checkPassword: (password: string) => Promise<boolean>;
     generateToken(): void;
 }
 
-type UserModel = Model<UserFields, {}, UserMethods>;
+const ARGON2_OPTIONS = {
+    type: argon2.argon2id,
+    memoryCost: 2 ** 16,
+    timeCost: 5,
+    parallelism: 1,
+};
 
-const Schema = mongoose.Schema;
+export const JWT_SECRET = process.env.JWT_SECRET || 'default_fallback_secret';
 
-const SALT_WORK_FACTOR = 10;
+type UserModel = mongoose.Model<UserDocument, {}, UserMethods>;
 
-const UserSchema = new Schema<
-    UserFields, UserModel, UserMethods>({
+const UserSchema = new mongoose.Schema<
+    UserDocument,
+    UserModel,
+    UserMethods,
+    {}
+>({
     email: {
         type: String,
         required: true,
@@ -23,10 +32,10 @@ const UserSchema = new Schema<
         validate: {
             validator: async function(value: string): Promise<boolean> {
                 if (!this.isModified('email')) return true;
-                const user = await User.findOne({email: value});
-                return Boolean(!user);
+                const user: HydratedDocument<UserFields> | null = await User.findOne({email: value});
+                return !user;
             },
-            message: "This email is already registered"
+            message: "This is email is already taken"
         }
     },
     password: {
@@ -37,40 +46,34 @@ const UserSchema = new Schema<
         type: String,
         required: true,
     },
-
     displayName: {
         type: String,
-        required: true,
+        required: false,
     },
     googleId: String,
 });
 
-UserSchema.pre('save', async function(next){
-    if (!this.isModified('password')) {
-        return next();
-    }
+UserSchema.methods.checkPassword = async function (password: string){
+    return await argon2.verify(this.password, password);
+}
 
-    const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
-    const hash = await bcrypt.hash(this.password, salt);
+UserSchema.methods.generateToken = function (){
+    this.token = jwt.sign({_id: this._id}, JWT_SECRET, { expiresIn: "365d" });
+}
 
-    this.password = hash;
+UserSchema.pre('save', async function (next){
+    if (!this.isModified("password")) return next();
+
+    this.password = await argon2.hash(this.password, ARGON2_OPTIONS);
     next();
 });
 
-UserSchema.set('toJSON', {
-    transform: (_doc, ret: Partial<UserFields>) => {
+UserSchema.set("toJSON", {
+    transform: (_doc, ret) => {
         delete ret.password;
         return ret;
     }
-});
+})
 
-UserSchema.methods.checkPassword = function(password: string) {
-    return bcrypt.compare(password, this.password);
-};
-
-UserSchema.methods.generateToken = function() {
-    this.token = randomUUID();
-}
-
-const User = mongoose.model<UserFields, UserModel>('User', UserSchema);
+const User = mongoose.model<UserDocument, UserModel>('User', UserSchema);
 export default User;

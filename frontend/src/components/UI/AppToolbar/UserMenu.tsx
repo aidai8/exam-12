@@ -33,20 +33,20 @@ const UserMenu: FC<Props> = ({ user }) => {
     return (
         <>
             <Button onClick={handleClick} color="inherit">
-                Hi, {user.displayName}!
+                Привет, {user.displayName}!
             </Button>
             <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
                 <MenuItem>
                     <Button component={Link} to="/my-recipes" onClick={handleClose}>
-                        My Recipes
+                        Мои рецепты
                     </Button>
                 </MenuItem>
                 <MenuItem>
                     <Button component={Link} to="/add-new-recipe" onClick={handleClose}>
-                        Add new recipe
+                        Добавить новый рецепт
                     </Button>
                 </MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                <MenuItem onClick={handleLogout}>Выйти</MenuItem>
             </Menu>
         </>
     );
