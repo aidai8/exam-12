@@ -31,14 +31,14 @@ const App = () => {
                       <Route path="/recipes/:id" element={<FullRecipe/>}/>
                       <Route path="/users/:userId/recipes" element={<UserRecipes />} />
 
-                      {/*<Route*/}
-                      {/*    path="/recipes/my-recipes"*/}
-                      {/*    element={*/}
-                      {/*        <ProtectedRoute isAllowed={Boolean(user)}>*/}
-                      {/*            <UserRecipes isOwnProfile={true} />*/}
-                      {/*        </ProtectedRoute>*/}
-                      {/*    }*/}
-                      {/*/>*/}
+                      <Route
+                          path="/recipes/my-recipes"
+                          element={
+                              <ProtectedRoute isAllowed={Boolean(user)}>
+                                  <UserRecipes isOwnProfile={true} />
+                              </ProtectedRoute>
+                          }
+                      />
                       <Route
                           path="/recipes/new"
                           element={

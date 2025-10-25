@@ -37,13 +37,13 @@ const UserMenu: FC<Props> = ({ user }) => {
             </Button>
             <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
                 <MenuItem>
-                    <Button component={Link} to="/my-recipes" onClick={handleClose}>
+                    <Button component={Link} to="/recipes/my-recipes" onClick={handleClose}>
                         Мои рецепты
                     </Button>
                 </MenuItem>
                 <MenuItem>
-                    <Button component={Link} to="/add-new-recipe" onClick={handleClose}>
-                        Добавить новый рецепт
+                    <Button component={Link} to="/recipes/new" onClick={handleClose}>
+                        Создать рецепт
                     </Button>
                 </MenuItem>
                 <MenuItem onClick={handleLogout}>Выйти</MenuItem>
